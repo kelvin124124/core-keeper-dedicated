@@ -1,7 +1,12 @@
 ###########################################################
 # Dockerfile that builds a Core Keeper Gameserver
 ###########################################################
-FROM cm2network/steamcmd:root
+FROM cm2network/steamcmd:root as base-amd64
+# Ignoring --platform=arm64 as this is required for the multi-arch build to continue to work on amd64 hosts
+FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root-2024-07-08 as base-arm64
+
+ARG TARGETARCH
+FROM base-${TARGETARCH}
 
 LABEL maintainer="leandro.martin@protonmail.com"
 
