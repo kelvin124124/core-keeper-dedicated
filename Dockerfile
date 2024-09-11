@@ -1,7 +1,12 @@
 ###########################################################
 # Dockerfile that builds a Core Keeper Gameserver
 ###########################################################
-FROM cm2network/steamcmd:root
+FROM cm2network/steamcmd:root as base-amd64
+# Ignoring --platform=arm64 as this is required for the multi-arch build to continue to work on amd64 hosts
+FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root-2024-07-08 as base-arm64
+
+ARG TARGETARCH
+FROM base-${TARGETARCH}
 
 LABEL maintainer="leandro.martin@protonmail.com"
 
@@ -15,16 +20,17 @@ ENV DLURL https://raw.githubusercontent.com/escapingnetwork/core-keeper-dedicate
 COPY ./entry.sh ${HOMEDIR}/entry.sh
 COPY ./launch.sh ${HOMEDIR}/launch.sh
 
-RUN dpkg --add-architecture i386
-
+#RUN dpkg --add-architecture i386
 # Install Core Keeper server dependencies and clean up
 # libx32gcc-s1 lib32gcc-s1 build-essential <- fixes tile generation bug (obsidian wall around spawn) without graphic cards mounted to server
 # need all 3 + dpkg i do not know why but every other combination would run the server at an extreme speed - that combination worked for me.
 # Thanks to https://www.reddit.com/r/CoreKeeperGame/comments/uym86p/comment/iays04w/?utm_source=share&utm_medium=web2x&context=3
+ARG TARGETARCH
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends --no-install-suggests \
-	xvfb mesa-utils libx32gcc-s1 lib32gcc-s1 build-essential libxi6 x11-utils tini \
+	xvfb mesa-utils libx32gcc-s1-amd64-cross lib32gcc-s1-amd64-cross build-essential libxi6 x11-utils tini \
+	&& if [[ "${TARGETARCH}" == "arm64" ]] ; then apt-get install -y box64 libdbus-1-3 libxcursor1 libxss1 libpulse-dev; fi \
 	&& mkdir -p "${STEAMAPPDIR}" \
 	&& mkdir -p "${STEAMAPPDATADIR}" \
 	&& chmod +x "${HOMEDIR}/entry.sh" \
@@ -34,7 +40,6 @@ RUN set -x \
 
 RUN mkdir /tmp/.X11-unix \
 	&& chown -R "${USER}:${USER}" /tmp/.X11-unix
-
 
 ENV WORLD_INDEX=0 \
 	WORLD_NAME="Core Keeper Server" \

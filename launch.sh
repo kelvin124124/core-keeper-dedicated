@@ -3,6 +3,9 @@
 # Switch to workdir
 cd "${STEAMAPPDIR}"
 
+# Get the architecture using dpkg
+architecture=$(dpkg --print-architecture)
+
 xvfbpid=""
 ckpid=""
 
@@ -69,7 +72,11 @@ if [ ! -z "${SERVER_PORT}" ]; then params=( "${params[@]}" -port "${SERVER_PORT}
 
 echo "${params[@]}"
 
-DISPLAY=:99 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:../Steamworks SDK Redist/linux64/" ./CoreKeeperServer "${params[@]}"&
+if [ "$architecture" == "arm64" ]; then
+  DISPLAY=:99 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:../Steamworks SDK Redist/linux64/" box64 ./CoreKeeperServer "${params[@]}"&
+else
+  DISPLAY=:99 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:../Steamworks SDK Redist/linux64/" ./CoreKeeperServer "${params[@]}"&
+fi
 
 ckpid=$!
 
