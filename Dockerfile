@@ -3,7 +3,24 @@
 ###########################################################
 FROM cm2network/steamcmd:root as base-amd64
 # Ignoring --platform=arm64 as this is required for the multi-arch build to continue to work on amd64 hosts
-FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root-2024-07-08 as base-arm64
+FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root as base-arm64
+# Set BOX64- & BOX86-Parameters
+# Thanks to @hsau / https://github.com/escapingnetwork/core-keeper-dedicated/issues/45
+ENV ARCHITECTURE=arm64\
+    BOX64_DYNAREC_BIGBLOCK=0 \
+    BOX64_DYNAREC_SAFEFLAGS=2 \
+    BOX64_DYNAREC_STRONGMEM=3 \
+    BOX64_DYNAREC_FASTROUND=0 \
+    BOX64_DYNAREC_FASTNAN=0 \
+    BOX64_DYNAREC_X87DOUBLE=1 \
+    BOX64_DYNAREC_BLEEDING_EDGE=0 \
+    BOX86_DYNAREC_BIGBLOCK=0 \
+    BOX86_DYNAREC_SAFEFLAGS=2 \
+    BOX86_DYNAREC_STRONGMEM=3 \
+    BOX86_DYNAREC_FASTROUND=0 \
+    BOX86_DYNAREC_FASTNAN=0 \
+    BOX86_DYNAREC_X87DOUBLE=1 \
+    BOX86_DYNAREC_BLEEDING_EDGE=0 
 
 ARG TARGETARCH
 FROM base-${TARGETARCH}
@@ -30,7 +47,8 @@ RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends --no-install-suggests \
 	xvfb mesa-utils libx32gcc-s1-amd64-cross lib32gcc-s1-amd64-cross build-essential libxi6 x11-utils tini \
-	&& if [[ "${TARGETARCH}" == "arm64" ]] ; then apt-get install -y box64 libdbus-1-3 libxcursor1 libxss1 libpulse-dev; fi \
+	&& if [[ "${TARGETARCH}" == "arm64" ]] ; then apt-get install -y libdbus-1-3 libxcursor1 libxss1 libpulse-dev libmonosgen-2.0 libmonosgen-2.0-1 ; fi \
+	&& apt-get upgrade -y \
 	&& mkdir -p "${STEAMAPPDIR}" \
 	&& mkdir -p "${STEAMAPPDATADIR}" \
 	&& chmod +x "${HOMEDIR}/entry.sh" \
