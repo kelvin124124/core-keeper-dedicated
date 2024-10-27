@@ -1,9 +1,9 @@
 ###########################################################
 # Dockerfile that builds a Core Keeper Gameserver
 ###########################################################
-FROM cm2network/steamcmd:root as base-amd64
+FROM cm2network/steamcmd:root AS base-amd64
 # Ignoring --platform=arm64 as this is required for the multi-arch build to continue to work on amd64 hosts
-FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root as base-arm64
+FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root AS base-arm64
 # Set BOX64- & BOX86-Parameters
 # Thanks to @hsau / https://github.com/escapingnetwork/core-keeper-dedicated/issues/45
 ENV ARCHITECTURE=arm64\
