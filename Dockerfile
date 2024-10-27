@@ -1,9 +1,9 @@
 ###########################################################
 # Dockerfile that builds a Core Keeper Gameserver
 ###########################################################
-FROM cm2network/steamcmd:root as base-amd64
+FROM cm2network/steamcmd:root AS base-amd64
 # Ignoring --platform=arm64 as this is required for the multi-arch build to continue to work on amd64 hosts
-FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root as base-arm64
+FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root AS base-arm64
 # Set BOX64- & BOX86-Parameters
 # Thanks to @hsau / https://github.com/escapingnetwork/core-keeper-dedicated/issues/45
 ENV ARCHITECTURE=arm64\
@@ -37,7 +37,8 @@ ENV DLURL https://raw.githubusercontent.com/escapingnetwork/core-keeper-dedicate
 COPY ./entry.sh ${HOMEDIR}/entry.sh
 COPY ./launch.sh ${HOMEDIR}/launch.sh
 
-#RUN dpkg --add-architecture i386
+RUN dpkg --add-architecture i386
+
 # Install Core Keeper server dependencies and clean up
 # libx32gcc-s1 lib32gcc-s1 build-essential <- fixes tile generation bug (obsidian wall around spawn) without graphic cards mounted to server
 # need all 3 + dpkg i do not know why but every other combination would run the server at an extreme speed - that combination worked for me.

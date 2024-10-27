@@ -2,6 +2,7 @@
 
 # Switch to workdir
 cd "${STEAMAPPDIR}"
+installdir="$(dirname -- "$0";)"
 
 xvfbpid=""
 ckpid=""
