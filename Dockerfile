@@ -41,16 +41,18 @@ RUN dpkg --add-architecture i386
 # Install Core Keeper server dependencies and clean up
 ARG TARGETARCH
 RUN set -x \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends --no-install-suggests \
-	xvfb mesa-utils libx32gcc-s1-amd64-cross lib32gcc-s1-amd64-cross build-essential libxi6 x11-utils tini \
-	&& if [[ "${TARGETARCH}" == "arm64" ]] ; then apt-get install -y box64 libdbus-1-3 libxcursor1 libxss1 libpulse-dev; fi \
-	&& mkdir -p "${STEAMAPPDIR}" \
-	&& mkdir -p "${STEAMAPPDATADIR}" \
-	&& chmod +x "${HOMEDIR}/entry.sh" \
-	&& chmod +x "${HOMEDIR}/launch.sh" \
-	&& chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${HOMEDIR}/launch.sh" "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" \
-	&& rm -rf /var/lib/apt/lists/*
+    && apt-get update \
+    && apt-get install -y --no-install-recommends --no-install-suggests \
+        xvfb \
+        libxi6 \
+        tini \
+        tzdata \
+        gosu \
+        jo \
+        gettext-base \
+#   xvfb mesa-utils libx32gcc-s1-amd64-cross lib32gcc-s1-amd64-cross build-essential libxi6 x11-utils tini \
+    && if [[ "${TARGETARCH}" == "arm64" ]] ; then apt-get install -y box64 libdbus-1-3 libxcursor1 libxss1 libpulse-dev; fi \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup X11 Sockets folder
 RUN mkdir /tmp/.X11-unix \

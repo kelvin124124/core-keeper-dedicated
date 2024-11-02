@@ -40,7 +40,12 @@ Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
 xvfbpid=$!
 
 # Start Core Keeper Server
-DISPLAY=:99 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" ./CoreKeeperServer "${params[@]}" &
+if [ "${ARCHITECTURE}" == "arm64" ]; then
+  DISPLAY=:99 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" box64 ./CoreKeeperServer "${params[@]}" &
+else
+  DISPLAY=:99 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" ./CoreKeeperServer "${params[@]}" &
+fi
+
 ckpid=$!
 
 LogDebug "Started server process with pid ${ckpid}"
