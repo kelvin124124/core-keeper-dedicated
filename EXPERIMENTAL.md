@@ -5,6 +5,10 @@ As soon as I get something stable i will update the `arm64-box64` branch.
 
 
 # Current tests
+## 2024-11-02 Rebase
+Rebase to current 2.0.0
+(May not everything is clean at the moment, but it is the experimantal branch. `arm64-box64` will be updated later)
+
 ## 2024-10-27 New branch
 This is the new branch where I will put any information I am able to find. 
 Also I will deploy any changes which will be part of my tests.
