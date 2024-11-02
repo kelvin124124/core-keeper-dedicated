@@ -39,6 +39,7 @@ ENV DLURL=https://raw.githubusercontent.com/escapingnetwork/core-keeper-dedicate
 RUN dpkg --add-architecture i386
 
 # Install Core Keeper server dependencies and clean up
+ARG TARGETARCH
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends --no-install-suggests \
