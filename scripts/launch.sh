@@ -55,3 +55,10 @@ source "${SCRIPTSDIR}/logfile-parser.sh"
 tail --pid "$ckpid" -f "$logfile" | LogParser &
 
 wait $ckpid
+
+#Infinte wait for debugging
+if [ -f "EXIT.txt" ]; then rm EXIT.txt; fi
+until [ -f EXIT.txt ]
+do
+     sleep 5
+done

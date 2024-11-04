@@ -18,6 +18,7 @@ add_param() {
 logfile="${STEAMAPPDIR}/logs/$(date '+%Y-%m-%d_%H-%M-%S').log"
 params=(
     "-batchmode"
+    "-extralog"
     "-logfile" "$logfile"
 )
 

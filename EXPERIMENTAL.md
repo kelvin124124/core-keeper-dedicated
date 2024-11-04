@@ -5,9 +5,20 @@ As soon as I get something stable i will update the `arm64-box64` branch.
 
 
 # Current tests
+## 2024-11-04 Prepare new test cases
+* add `-extralog` parameter
+* add infinite sleep for debugging
+
 ## 2024-11-02 Rebase
 Rebase to current 2.0.0
 (May not everything is clean at the moment, but it is the experimantal branch. `arm64-box64` will be updated later)
+
+Faster startup by defining a volume for the program data:
+```
+sudo docker build . --tag ck
+sudo docker volume create core
+sudo docker run ck -v core:/home/steam/core-keeper-dedicated
+```
 
 ## 2024-10-27 New branch
 This is the new branch where I will put any information I am able to find. 
