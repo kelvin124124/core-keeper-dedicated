@@ -9,6 +9,14 @@ As soon as I get something stable i will update the `arm64-box64` branch.
 * add `-extralog` parameter
 * add infinite sleep for debugging
 
+Tried to install extra components
+```
+apt-get update
+apt-get install libxinerama1
+apt-get install libmonosgen-2.0-1
+apt-get install libatomic1
+```
+
 ## 2024-11-02 Rebase
 Rebase to current 2.0.0
 (May not everything is clean at the moment, but it is the experimantal branch. `arm64-box64` will be updated later)
@@ -17,7 +25,7 @@ Faster startup by defining a volume for the program data:
 ```
 sudo docker build . --tag ck
 sudo docker volume create core
-sudo docker run ck -v core:/home/steam/core-keeper-dedicated
+sudo docker run -v core:/home/steam/core-keeper-dedicated ck
 ```
 
 ## 2024-10-27 New branch
