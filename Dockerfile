@@ -36,10 +36,12 @@ RUN set -x \
     && chmod 1777 /tmp/.X11-unix \
     && chown root /tmp/.X11-unix \
     && mkdir -p "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${MODSDIR}" "${SCRIPTSDIR}" \
-    && chown -R steam:steam "${SCRIPTSDIR}" "${STEAMAPPDIR}" "${STEAMAPPDATADIR}"
+    && chown -R steam:steam "${SCRIPTSDIR}" "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" \
+    && chmod -R 755 "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${SCRIPTSDIR}"
 
 COPY ./scripts ${SCRIPTSDIR}
-RUN chmod +x -R "${SCRIPTSDIR}"
+RUN chmod +x -R "${SCRIPTSDIR}" \
+    && chown -R steam:steam "${SCRIPTSDIR}"
 
 USER steam
 WORKDIR /home/steam
