@@ -12,10 +12,10 @@ services:
       - "27015:27015/udp"
 
     environment:
+      - ARM64_DEVICE=adlink # generic / rpi5 / m1 / adlink (Oracle ARM CPUs)
       # User configuration
       - PUID=1000
       - PGID=1000
-      
       # Game server configuration
       - WORLD_NAME=Core Keeper ARM64
       - WORLD_SEED=0
