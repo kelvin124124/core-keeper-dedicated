@@ -71,7 +71,7 @@ run_steamcmd() {
     if [ ! -x "${steamcmd_path}" ]; then
         LogError "SteamCMD not found or not executable: ${steamcmd_path}"
         return 1
-    }
+    fi
     
     LogAction "Running SteamCMD update..."
     LogDebug "SteamCMD arguments: ${args[*]}"
@@ -79,7 +79,7 @@ run_steamcmd() {
     if ! bash "${steamcmd_path}" "${args[@]}"; then
         LogError "SteamCMD update failed"
         return 1
-    }
+    fi
     
     LogSuccess "SteamCMD update completed successfully"
     return 0
