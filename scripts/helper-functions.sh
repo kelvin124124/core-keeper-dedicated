@@ -40,21 +40,3 @@ LogDebug() {
         Log "$1" "${COLORS["BLUE"]}"
     fi
 }
-
-SendDiscordMessage() {
-  local title="$1"
-  local message="$2"
-  local color="$3"
-  local wait="$4"
-
-  if [ -n "${DISCORD_WEBHOOK_URL}" ]; then
-    # printf is to solve issues with literal \n and jo
-    # shellcheck disable=SC2059
-    "${SCRIPTSDIR}"/discord.sh "$title" "$(printf "$message")" "$color" &
-    waitpid=$!
-  fi
-
-  if [[ "${wait,,}" == true ]]; then
-    wait "$waitpid"
-  fi
-}

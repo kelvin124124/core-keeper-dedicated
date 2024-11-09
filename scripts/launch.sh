@@ -14,12 +14,6 @@ function kill_corekeeperserver {
         kill $xvfbpid
         wait $xvfbpid
     fi
-
-    # Sends stop message
-    if [[ "${DISCORD_SERVER_STOP_ENABLED,,}" == true ]]; then
-        wait=true
-        SendDiscordMessage "$DISCORD_SERVER_STOP_TITLE" "$DISCORD_SERVER_STOP_MESSAGE" "$DISCORD_SERVER_STOP_COLOR" "$wait"
-    fi
 }
 
 trap kill_corekeeperserver EXIT
@@ -49,10 +43,6 @@ fi
 ckpid=$!
 
 LogDebug "Started server process with pid ${ckpid}"
-
-# Monitor server logs for player join/leave, server start, and server stop
-source "${SCRIPTSDIR}/logfile-parser.sh"
-tail --pid "$ckpid" -f "$logfile" | LogParser &
 
 wait $ckpid
 

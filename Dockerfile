@@ -1,6 +1,5 @@
-###########################################################
 # Dockerfile that builds a Core Keeper Gameserver
-###########################################################
+
 FROM cm2network/steamcmd:root AS base-amd64
 # Ignoring --platform=arm64 as this is required for the multi-arch build to continue to work on amd64 hosts
 FROM --platform=arm64 sonroyaalmerol/steamcmd-arm64:root AS base-arm64
@@ -31,8 +30,6 @@ ENV ARCHITECTURE=arm64\
 ARG TARGETARCH
 FROM base-${TARGETARCH}
 
-LABEL maintainer="leandro.martin@protonmail.com"
-
 ENV STEAMAPPID=1007
 ENV STEAMAPPID_TOOL=1963720
 ENV STEAMAPP=core-keeper
@@ -40,7 +37,6 @@ ENV STEAMAPPDIR="${HOMEDIR}/${STEAMAPP}-dedicated"
 ENV STEAMAPPDATADIR="${HOMEDIR}/${STEAMAPP}-data"
 ENV SCRIPTSDIR="${HOMEDIR}/scripts"
 ENV MODSDIR="${STEAMAPPDATADIR}/StreamingAssets/Mods"
-ENV DLURL=https://raw.githubusercontent.com/escapingnetwork/core-keeper-dedicated
 
 RUN dpkg --add-architecture i386
 
@@ -86,27 +82,6 @@ ENV PUID=1000 \
     SEASON="" \
     SERVER_IP="" \
     SERVER_PORT="" \
-    DISCORD_WEBHOOK_URL="" \
-    # Player Join
-    DISCORD_PLAYER_JOIN_ENABLED=true \
-    DISCORD_PLAYER_JOIN_MESSAGE='${char_name} (${steamid}) has joined the server.' \
-    DISCORD_PLAYER_JOIN_TITLE="Player Joined" \
-    DISCORD_PLAYER_JOIN_COLOR="47456" \
-    # Player Leave
-    DISCORD_PLAYER_LEAVE_ENABLED=true \
-    DISCORD_PLAYER_LEAVE_MESSAGE='${char_name} (${steamid}) has disconnected. Reason: ${reason}.' \
-    DISCORD_PLAYER_LEAVE_TITLE="Player Left" \
-    DISCORD_PLAYER_LEAVE_COLOR="11477760" \
-    # Server Start
-    DISCORD_SERVER_START_ENABLED=true \
-    DISCORD_SERVER_START_MESSAGE='**World:** ${world_name}\n**GameID:** ${gameid}' \
-    DISCORD_SERVER_START_TITLE="Server Started" \
-    DISCORD_SERVER_START_COLOR="2013440" \
-    # Server Stop
-    DISCORD_SERVER_STOP_ENABLED=true \
-    DISCORD_SERVER_STOP_MESSAGE="" \
-    DISCORD_SERVER_STOP_TITLE="Server Stopped" \
-    DISCORD_SERVER_STOP_COLOR="12779520"
 
 # Switch to workdir
 WORKDIR ${HOMEDIR}
