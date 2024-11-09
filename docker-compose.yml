@@ -25,5 +25,5 @@ services:
     volumes:
       - ./server-data:/home/steam/core-keeper-data:rw
 
-    user: "1000:1000"
+    user: "${PUID}:${PGID}" # ignore the "variable is not set" warnings
     restart: unless-stopped
