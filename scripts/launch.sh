@@ -1,54 +1,95 @@
 #!/bin/bash
+set -e
+
+# Source required scripts
 source "${SCRIPTSDIR}/helper-functions.sh"
 
-# Switch to workdir
-cd "${STEAMAPPDIR}" || exit
-
-### Function for gracefully shutdown
-function kill_corekeeperserver {
-    if [[ -n "$ckpid" ]]; then
-        kill $ckpid
-        wait $ckpid
-    fi
-    if [[ -n "$xvfbpid" ]]; then
-        kill $xvfbpid
-        wait $xvfbpid
-    fi
+# Switch to working directory
+cd "${STEAMAPPDIR}" || {
+    LogError "Failed to change to directory: ${STEAMAPPDIR}"
+    exit 1
 }
 
-trap kill_corekeeperserver EXIT
+# Process management variables
+declare -g ckpid=""
+declare -g xvfbpid=""
 
-if [ -f "GameID.txt" ]; then rm GameID.txt; fi
+# Cleanup function for graceful shutdown
+cleanup() {
+    LogAction "Initiating shutdown sequence..."
+    
+    if [[ -n "${ckpid}" ]]; then
+        LogAction "Stopping Core Keeper Server (PID: ${ckpid})"
+        kill -TERM "${ckpid}" 2>/dev/null || true
+        wait "${ckpid}" 2>/dev/null || true
+    fi
+    
+    if [[ -n "${xvfbpid}" ]]; then
+        LogAction "Stopping Xvfb (PID: ${xvfbpid})"
+        kill -TERM "${xvfbpid}" 2>/dev/null || true
+        wait "${xvfbpid}" 2>/dev/null || true
+    fi
+    
+    LogSuccess "Shutdown complete"
+}
 
-# Compile Parameters
-# Populates `params` array with parameters.
-# Creates `logfile` var with log file path.
-source "${SCRIPTSDIR}/compile-parameters.sh"
+# Set up trap for cleanup
+trap cleanup EXIT TERM INT
 
-# Create the log file and folder.
-mkdir -p "${STEAMAPPDIR}/logs"
-touch "$logfile"
-
-# Start Xvfb
-Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
-xvfbpid=$!
-
-# Start Core Keeper Server
-if [ "${ARCHITECTURE}" == "arm64" ]; then
-  DISPLAY=:99 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" box64 ./CoreKeeperServer "${params[@]}" &
-else
-  DISPLAY=:99 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" ./CoreKeeperServer "${params[@]}" &
+# Clean up any existing GameID file
+if [ -f "GameID.txt" ]; then
+    rm "GameID.txt"
 fi
 
-ckpid=$!
+# Compile server parameters
+source "${SCRIPTSDIR}/compile-parameters.sh"
 
-LogDebug "Started server process with pid ${ckpid}"
+# Start Xvfb
+LogAction "Starting Xvfb"
+Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
+xvfbpid="$!"
 
-wait $ckpid
+# Wait for Xvfb to be ready
+sleep 1
 
-#Infinte wait for debugging
-if [ -f "EXIT.txt" ]; then rm EXIT.txt; fi
-until [ -f EXIT.txt ]
-do
-     sleep 5
+# Verify Xvfb is running
+if ! kill -0 "${xvfbpid}" 2>/dev/null; then
+    LogError "Failed to start Xvfb"
+    exit 1
+fi
+
+LogSuccess "Xvfb started successfully"
+
+# Start Core Keeper Server
+LogAction "Starting Core Keeper Server"
+export DISPLAY=:99
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/"
+
+if [ "${ARCHITECTURE}" == "arm64" ]; then
+    box64 ./CoreKeeperServer "${params[@]}" &
+else
+    ./CoreKeeperServer "${params[@]}" &
+fi
+
+ckpid="$!"
+
+LogSuccess "Server started with PID: ${ckpid}"
+LogDebug "Launch parameters: ${params[*]}"
+
+# Monitor server process
+while kill -0 "${ckpid}" 2>/dev/null; do
+    sleep 5
 done
+
+# Clean up EXIT.txt file
+if [ -f "EXIT.txt" ]; then
+    rm "EXIT.txt"
+fi
+
+# Wait for EXIT.txt to be created (backup exit condition)
+LogInfo "Server process ended, waiting for EXIT.txt"
+while [ ! -f "EXIT.txt" ]; do
+    sleep 5
+done
+
+LogSuccess "Server shutdown completed successfully"

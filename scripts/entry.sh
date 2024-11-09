@@ -1,39 +1,65 @@
 #!/bin/bash
+set -e
+
+# Source helper functions for logging
 source "${SCRIPTSDIR}/helper-functions.sh"
 
-# From: https://github.com/thijsvanloef/palworld-server-docker/blob/32ffe489daecbc332701592f2facf0fe3237c65f/scripts/init.sh#L15
-# Checks for root, updates UID and GID of user steam
-# and updates folders owners
-if [[ "$(id -u)" -eq 0 ]] && [[ "$(id -g)" -eq 0 ]]; then
-    if [[ "${PUID}" -ne 0 ]] && [[ "${PGID}" -ne 0 ]]; then
-        LogAction "EXECUTING USERMOD"
-        usermod -o -u "${PUID}" "${USER}"
-        groupmod -o -g "${PGID}" "${USER}"
-        chown -R "${USER}:${USER}" "${HOMEDIR}"
-    else
-        LogError "Running as root is not supported, please fix your PUID and PGID!"
-        exit 1
+# Check if running as root and handle UID/GID updates
+check_and_update_user() {
+    if [[ "$(id -u)" -eq 0 ]] && [[ "$(id -g)" -eq 0 ]]; then
+        if [[ "${PUID}" -ne 0 ]] && [[ "${PGID}" -ne 0 ]]; then
+            LogAction "Updating UID/GID for user ${USER}"
+            usermod -o -u "${PUID}" "${USER}"
+            groupmod -o -g "${PGID}" "${USER}"
+            chown -R "${USER}:${USER}" "${HOMEDIR}"
+            return 0
+        else
+            LogError "Running as root is not supported, please fix your PUID and PGID!"
+            return 1
+        fi
+    elif [[ "$(id -u)" -eq 0 ]] || [[ "$(id -g)" -eq 0 ]]; then
+        LogError "Running as root is not supported, please fix your user!"
+        return 1
     fi
-elif [[ "$(id -u)" -eq 0 ]] || [[ "$(id -g)" -eq 0 ]]; then
-    LogError "Running as root is not supported, please fix your user!"
-    exit 1
-fi
+    return 0
+}
 
-if ! [ -w "${STEAMAPPDIR}" ]; then
-    LogError "${STEAMAPPDIR} is not writable."
-    exit 1
-fi
+# Check directory permissions
+check_directories() {
+    local dirs=("${STEAMAPPDIR}" "${STEAMAPPDATADIR}")
+    
+    for dir in "${dirs[@]}"; do
+        if ! [ -w "${dir}" ]; then
+            LogError "${dir} is not writable"
+            return 1
+        fi
+    done
+    return 0
+}
 
-if ! [ -w "${STEAMAPPDATADIR}" ]; then
-    LogError "${STEAMAPPDATADIR} is not writable."
-    exit 1
-fi
+# Cleanup any leftover X11 locks
+cleanup_x11() {
+    if [ -f "/tmp/.X99-lock" ]; then
+        LogAction "Removing stale X11 lock file"
+        rm "/tmp/.X99-lock"
+    fi
+}
 
-#Restart cleanup
-if [ -f "/tmp/.X99-lock" ]; then rm /tmp/.X99-lock; fi
+# Main execution
+main() {
+    # Perform all checks
+    check_and_update_user || exit 1
+    check_directories || exit 1
+    cleanup_x11
 
-if [[ "$(id -u)" -eq 0 ]]; then
-    exec gosu "${USER}" bash "${SCRIPTSDIR}/setup.sh"
-else
-    exec bash "${SCRIPTSDIR}/setup.sh"
-fi
+    # Execute setup script with appropriate user
+    if [[ "$(id -u)" -eq 0 ]]; then
+        LogAction "Executing setup as user ${USER}"
+        exec gosu "${USER}" bash "${SCRIPTSDIR}/setup.sh"
+    else
+        LogAction "Executing setup"
+        exec bash "${SCRIPTSDIR}/setup.sh"
+    fi
+}
+
+main
