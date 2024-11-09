@@ -1,5 +1,3 @@
-#### docker-compose.yml
-```yaml
 # docker-compose.yml
 services:
   core-keeper:
@@ -14,6 +12,7 @@ services:
     ports:
       - "27015:27015/udp"
 
+    # System configuration
     environment:
       # User configuration
       - PUID=1000
@@ -29,4 +28,3 @@ services:
       - ./server-data:/home/steam/core-keeper-data
     
     restart: unless-stopped
-```

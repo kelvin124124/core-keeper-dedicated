@@ -1,6 +1,5 @@
 FROM sonroyaalmerol/steamcmd-arm64:root
 
-    # System configuration
 ENV ARCHITECTURE=arm64 \
     BOX64_DYNAREC_STRONGMEM=3 \
     # Steam app configuration
