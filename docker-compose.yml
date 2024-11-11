@@ -12,6 +12,9 @@ services:
       - "27015:27015/udp"
 
     environment:
+      #- BOX86_LOG=1
+      #- BOX64_LOG=1
+
       - ARM64_DEVICE=adlink # generic / rpi5 / m1 / adlink (Oracle ARM CPUs)
       # User configuration
       - PUID=1000
