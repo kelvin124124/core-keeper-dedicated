@@ -1,4 +1,3 @@
-# docker-compose.yml
 services:
   core-keeper:
     container_name: core-keeper
@@ -12,21 +11,19 @@ services:
       - "27015:27015/udp"
 
     environment:
-      #- BOX86_LOG=1
-      #- BOX64_LOG=1
-
-      - ARM64_DEVICE=adlink # generic / rpi5 / m1 / adlink (Oracle ARM CPUs)
+      - BOX86_LOG=1
+      - BOX64_LOG=1
       # User configuration
       - PUID=1000
       - PGID=1000
-      # Game server configuration
+      # Server configuration
       - WORLD_NAME=Core Keeper ARM64
       - WORLD_SEED=0
       - WORLD_MODE=0
       - MAX_PLAYERS=10
+      - DATA_PATH=/home/steam/core-keeper-data
 
     volumes:
       - ./server-data:/home/steam/core-keeper-data:rw
 
-    user: "${PUID}:${PGID}" # ignore the "variable is not set" warnings
     restart: unless-stopped
