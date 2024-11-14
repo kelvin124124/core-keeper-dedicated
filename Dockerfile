@@ -21,6 +21,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libdbus-1-3 tini tzdata gosu \
     && rm -rf /var/lib/apt/lists/*
 
+# Add x86_64 architecture support
+RUN dpkg --add-architecture amd64 && \
+    apt-get update && \
+    apt-get install -y libc6:amd64 && \
+    mkdir -p /lib64 && \
+    rm -f /lib64/ld-linux-x86-64.so.2 && \
+    ln -s /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 /lib64/ld-linux-x86-64.so.2 && \
+    rm -rf /var/lib/apt/lists/*
+
 # Box64 setup
 RUN wget -qO- https://pi-apps-coders.github.io/box64-debs/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/box64-archive-keyring.gpg && \
     echo "Types: deb\nURIs: https://Pi-Apps-Coders.github.io/box64-debs/debian\nSuites: ./\nSigned-By: /usr/share/keyrings/box64-archive-keyring.gpg" | tee /etc/apt/sources.list.d/box64.sources && \
@@ -50,7 +59,8 @@ RUN groupadd -g ${PGID} steam && \
     mkdir -p "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${MODSDIR}" "${SCRIPTSDIR}" /tmp/.X11-unix && \
     chown -R steam:steam /home/steam "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${SCRIPTSDIR}" && \
     chmod -R 755 "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${SCRIPTSDIR}" && \
-    chmod 1777 /tmp/.X11-unix
+    chmod 1777 /tmp/.X11-unix && \
+    echo "steam ALL=(ALL) NOPASSWD:/usr/bin/chown" >> /etc/sudoers.d/steam
 
 # Create entry script
 COPY --chown=steam:steam ./scripts/* ${SCRIPTSDIR}/
