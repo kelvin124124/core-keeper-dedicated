@@ -25,9 +25,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN dpkg --add-architecture amd64 && \
     apt-get update && \
     apt-get install -y libc6:amd64 && \
-    mkdir -p /lib64 && \
-    rm -f /lib64/ld-linux-x86-64.so.2 && \
-    ln -s /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 /lib64/ld-linux-x86-64.so.2 && \
     rm -rf /var/lib/apt/lists/*
 
 # Box64 setup
