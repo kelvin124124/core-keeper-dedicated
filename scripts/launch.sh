@@ -1,27 +1,29 @@
-# launch.sh
 #!/bin/bash
 set -e
 
-log() {
-    printf '\033[1;36m[%s] %s\033[0m\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1"
+cd "${STEAMAPPDIR}"
+
+# Start Xvfb
+Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
+xvfb_pid=$!
+export DISPLAY=:99
+
+# Download depot first
+/opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate
+/opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate
+
+chmod +x ./CoreKeeperServer
+box64 ./CoreKeeperServer -batchmode -logfile CoreKeeperServerLog.txt ${SERVER_PARAMS[@]} &
+ck_pid=$!
+
+cleanup() {
+    kill $xvfb_pid $ck_pid 2>/dev/null
 }
+trap cleanup EXIT
 
-cd "${STEAMAPPDIR}" || exit 1
+# Wait for log file to be created
+while [ ! -f CoreKeeperServerLog.txt ]; do
+    sleep 1
+done
 
-# Build server parameters
-params=""
-[ -n "$WORLD_INDEX" ] && params+=" -world $WORLD_INDEX"
-[ -n "$WORLD_NAME" ] && params+=" -worldname $WORLD_NAME"
-[ -n "$WORLD_SEED" ] && params+=" -worldseed $WORLD_SEED"
-[ -n "$WORLD_MODE" ] && params+=" -worldmode $WORLD_MODE"
-[ -n "$GAME_ID" ] && params+=" -gameid $GAME_ID"
-[ -n "$DATA_PATH" ] && params+=" -datapath ${DATA_PATH:-${STEAMAPPDATADIR}}"
-[ -n "$MAX_PLAYERS" ] && params+=" -maxplayers $MAX_PLAYERS"
-[ -n "$SEASON" ] && params+=" -season $SEASON"
-[ -n "$SERVER_IP" ] && params+=" -ip $SERVER_IP"
-[ -n "$SERVER_PORT" ] && params+=" -port $SERVER_PORT"
-
-log "Starting Core Keeper Server"
-./_launch.sh $params
-
-log "Server shutdown completed"
+exec tail -f CoreKeeperServerLog.txt
