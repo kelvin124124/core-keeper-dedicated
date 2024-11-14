@@ -45,15 +45,18 @@ RUN mkdir -p /opt/depotdownloader && \
     rm DepotDownloader-linux-arm64.zip
 
 # Create steam user and setup directories
-RUN useradd -m -u ${PUID} steam && \
-    mkdir -p "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${MODSDIR}" "${SCRIPTSDIR}" && \
-    chown -R steam:steam "${SCRIPTSDIR}" "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" && \
+RUN groupadd -g ${PGID} steam && \
+    useradd -u ${PUID} -g steam -m steam && \
+    mkdir -p "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${MODSDIR}" "${SCRIPTSDIR}" /tmp/.X11-unix && \
+    chown -R steam:steam /home/steam "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${SCRIPTSDIR}" && \
     chmod -R 755 "${STEAMAPPDIR}" "${STEAMAPPDATADIR}" "${SCRIPTSDIR}" && \
-    mkdir -p /tmp/.X11-unix && \
     chmod 1777 /tmp/.X11-unix
 
+# Create entry script
 COPY --chown=steam:steam ./scripts/* ${SCRIPTSDIR}/
-RUN chmod +x ${SCRIPTSDIR}/*
+RUN chmod +x ${SCRIPTSDIR}/* && \
+    mkdir -p "${STEAMAPPDATADIR}/StreamingAssets/Mods" && \
+    chown -R steam:steam "${STEAMAPPDATADIR}"
 
 USER steam
 WORKDIR /home/steam
