@@ -12,20 +12,20 @@ ENV DEBIAN_FRONTEND=noninteractive \
     USER=steam \
     HOMEDIR=/home/steam
 
+# Add x86_64 architecture support
+RUN dpkg --add-architecture amd64 && \
+    apt-get update
+
 # Base dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get install -y --no-install-recommends \
     wget unzip xvfb libglib2.0-0 libx11-6 libxcursor1 libxrandr2 \
     libasound2 gpg software-properties-common sudo \
     libxfixes3 libxrender1 libxinerama1 libxi6 libxss1 libxtst6 \
     libatomic1 libpulse0 libpulse-mainloop-glib0 libicu-dev \
     libdbus-1-3 tini tzdata gosu \
+    mono-complete libsdl2-2.0-0 \
+    libc6:amd64 libstdc++6:amd64 libgcc1:amd64 \
     && rm -rf /var/lib/apt/lists/*
-
-# Add x86_64 architecture support
-RUN dpkg --add-architecture amd64 && \
-    apt-get update && \
-    apt-get install -y libc6:amd64 && \
-    rm -rf /var/lib/apt/lists/*
 
 # Box64 setup
 RUN wget -qO- https://pi-apps-coders.github.io/box64-debs/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/box64-archive-keyring.gpg && \
