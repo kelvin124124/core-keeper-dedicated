@@ -1,13 +1,9 @@
-# entry.sh
 #!/bin/bash
 set -e
 
 log() {
     printf '\033[1;36m[%s] %s\033[0m\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1"
 }
-
-# Ensure data directory has correct permissions
-sudo chown -R ${PUID}:${PGID} "${STEAMAPPDATADIR}"
 
 # Check directory permissions
 for dir in "${STEAMAPPDIR}" "${STEAMAPPDATADIR}"; do
