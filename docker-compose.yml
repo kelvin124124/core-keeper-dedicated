@@ -6,8 +6,6 @@ services:
       platforms:
         - linux/arm64
     platform: linux/arm64
-    ports:
-      - "27015:27015/udp"
     environment:
       - PUID=1000
       - PGID=1000
