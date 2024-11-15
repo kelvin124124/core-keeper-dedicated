@@ -1,6 +1,6 @@
 services:
-  core-keeper:
-    container_name: core-keeper
+  ck:
+    container_name: ck
     build:
       context: .
       platforms:
