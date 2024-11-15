@@ -1,6 +1,11 @@
 #### Status
 
-Running with the following error and warnings:
+- [x] Build
+- [x] Run
+- [x] Game
+- [ ] Optimize
+
+Running with the following errors and warnings:
 
 ```
 core-keeper  | Error: Symbol _ZSt28__throw_bad_array_new_lengthv not found, cannot apply R_X86_64_JUMP_SLOT @0x7fff14054200 (0x6400) in /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/Plugins/libsentry.so
@@ -32,11 +37,4 @@ core-keeper  | [S_API FAIL] Tried to access Steam interface SteamNetworkingUtils
 core-keeper  | Steam API initialized
 ```
 
-Sentry is solely used for crash reporting, so it's not a big deal if it's not working, however the steamclient error is concerning.
-Also this branch seems to be frozen after
-```
-core-keeper  | starting a new world : 6d1bae7bf40812978482107bcc912cb2
-core-keeper  | Using seed 4003413424
-core-keeper  | Starting new world with generation type FullRelease
-```
-which is worse than the experimental branch, albeit having less errors.
+Some lag but is playable.
