@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     BOX64_DYNAREC_BIGBLOCK=1 \
     BOX64_DYNAREC_SAFEFLAGS=1 \
     BOX64_DYNAREC_STRONGMEM=2 \
-    BOX64_DYNAREC_X87DOUBLE=1 \ 
+    BOX64_DYNAREC_X87DOUBLE=1 \
     BOX64_MALLOC_HACK=1 \
     BOX64_DYNAREC_FASTROUND=0 \
     BOX64_DYNAREC_FASTNAN=0 \
@@ -45,25 +45,10 @@ RUN dpkg --add-architecture amd64 && \
         unzip \
         tini \
         gosu \
-        sudo \
-        tzdata \
         xvfb \
         libx11-6 \
-        libxcursor1 \
-        libxrandr2 \
-        libxfixes3 \
-        libxrender1 \
-        libxinerama1 \
-        libxi6 \
-        libxss1 \
-        libxtst6 \
-        libasound2 \
-        libpulse0 \
-        libpulse-mainloop-glib0 \
         libglib2.0-0 \
         libatomic1 \
-        libicu-dev \
-        libdbus-1-3 \
         mono-complete \
         libsdl2-2.0-0 \
         libc6:amd64 \
