@@ -13,6 +13,7 @@ for dir in "${STEAMAPPDIR}" "${STEAMAPPDATADIR}"; do
     fi
 done
 
+# Download server files
 log "Downloading Core Keeper Dedicated Server files..."
 /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate
 
