@@ -10,7 +10,7 @@ services:
       - PUID=1000
       - PGID=1000
       # Server configuration
-      - WORLD_NAME=Core Keeper ARM64
+      - WORLD_NAME=Core-Keeper-ARM64
       - WORLD_SEED=0
       - WORLD_MODE=0
       - MAX_PLAYERS=10
