@@ -25,11 +25,9 @@ if [ ! -f "${STEAMAPPDIR}/CoreKeeperServer" ]; then
     while true; do sleep 3600; done
 fi
 
-# Ensure all scripts are executable
-chmod +x "${STEAMAPPDIR}"/*.sh
-chmod +x "${STEAMAPPDIR}"/CoreKeeperServer
+chmod +x "${STEAMAPPDIR}"/*.sh "${STEAMAPPDIR}"/CoreKeeperServer
 
-mkdir -p ~/.steam/sdk32/ ~/.steam/sdk64/
+mkdir -p ~/.steam/sdk{32,64}/
 ln -sf "${STEAMAPPDIR}/linux32/steamclient.so" ~/.steam/sdk32/steamclient.so
 ln -sf "${STEAMAPPDIR}/linux64/steamclient.so" ~/.steam/sdk64/steamclient.so
 

@@ -5,36 +5,16 @@
 - [x] Game
 - [ ] Optimize
 
-Running with the following errors and warnings:
-
-```
-core-keeper  | Error: Symbol _ZSt28__throw_bad_array_new_lengthv not found, cannot apply R_X86_64_JUMP_SLOT @0x7fff14054200 (0x6400) in /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/Plugins/libsentry.so
-core-keeper  | Error: relocating Plt symbols in elf libsentry.so
-core-keeper  | Preloaded 'libsteam_api.so'
-core-keeper  | Error: Symbol _ZSt28__throw_bad_array_new_lengthv not found, cannot apply R_X86_64_JUMP_SLOT @0x7fff16054200 (0x6400) in /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/Plugins/libsentry.so
-core-keeper  | Error: relocating Plt symbols in elf libsentry.so
-core-keeper  | Unable to preload the following plugins:
-core-keeper  |  libsentry.so
-...
-core-keeper  | Error: Symbol _ZSt28__throw_bad_array_new_lengthv not found, cannot apply R_X86_64_JUMP_SLOT @0x7fff18054200 (0x6400) in /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/Plugins/libsentry.so
-core-keeper  | Error: relocating Plt symbols in elf libsentry.so
-core-keeper  | Fallback handler could not load library /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/MonoBleedingEdge/x86_64/sentry
-core-keeper  | PlatformConfiguration: loading platform configuration for variant Linux.
-core-keeper  | PlatformConfiguration: platform configuration for variant Linux was not found.
-core-keeper  | PlatformConfiguration: loading platform configuration for variant PC.
-core-keeper  | Fallback handler could not load library /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/MonoBleedingEdge/x86_64/data-0x44d461f0.so
-core-keeper  | Fallback handler could not load library /home/steam/core-keeper-dedicated/CoreKeeperServer_Data/MonoBleedingEdge/x86_64/data-0x44edc600.so
-core-keeper  | Initializing Steamworks with AppID 1621690
-core-keeper  | dlopen failed trying to load:
-core-keeper  | steamclient.so
-core-keeper  | with error:
-core-keeper  | Cannot dlopen("steamclient.so"/0x7fff1503fe85, 2)
-core-keeper  | 
-core-keeper  | [S_API] SteamAPI_Init(): Loaded '/home/steam/.steam/sdk64/steamclient.so' OK.  (First tried local 'steamclient.so')
-core-keeper  | CAppInfoCacheReadFromDiskThread took 1 milliseconds to initialize
-core-keeper  | Setting breakpad minidump AppID = 1621690
-core-keeper  | [S_API FAIL] Tried to access Steam interface SteamNetworkingUtils004 before SteamAPI_Init succeeded.
-core-keeper  | Steam API initialized
-```
-
 Some lag but is playable.
+
+LLM analysis on log file:
+
+The log reveals a recurring error related to a missing symbol `_ZSt28__throw_bad_array_new_lengthv` within the `libsentry.so` plugin, preventing its preloading. This suggests an incompatibility between the plugin and the current environment, likely due to a missing or mismatched library dependency. As a result, Sentry functionality will be unavailable.
+
+\* Remarks: Sentry is for error tracking and monitoring, so it is not critical for the server's core functionality.
+
+Despite this plugin issue, the Core Keeper server successfully initializes using the Unity engine (version 2022.3.20f1).  Steamworks integration is also successful, after initially attempting to use a local `steamclient.so` file before correctly loading the system's Steam client library.  The server then proceeds to load world data, including faction configurations, loot tables, fishing data, and spawn configurations from various JSON files.  The world file itself is decompressed and deserialized, and the server notes a seed mismatch, opting to use the seed from the world data.
+
+Network connectivity establishes through Steam's relay network, with successful ping measurements and connections to various routing clusters. A player connects to the server and is successfully authenticated. A significant amount of data exchange occurs between the server and the client, as indicated by the numerous "Send Nagle" messages in the log.
+
+After some gameplay, the player disconnects with the reason "App_Min". The server acknowledges the disconnection, resets the timescale, and cleans up the associated network sessions.  The log concludes with messages about discarding inactive sessions and clearing out records of port failures, which is part of the normal network cleanup process after a player disconnects.  The overall impression is that, aside from the Sentry plugin issue, the server functioned as expected.
