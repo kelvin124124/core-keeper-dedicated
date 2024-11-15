@@ -9,7 +9,7 @@ xvfb_pid=$!
 export DISPLAY=:99
 
 # Setup params
-params="-batchmode -extralog -logfile server-log.txt"
+params="-batchmode -extralog -logfile CoreKeeperServerLog.txt"
 [ -n "$WORLD_INDEX" ] && params+=" -world $WORLD_INDEX"
 [ -n "$WORLD_NAME" ] && params+=" -worldname $WORLD_NAME"
 [ -n "$WORLD_SEED" ] && params+=" -worldseed $WORLD_SEED"
@@ -29,15 +29,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Function to monitor GameID
+# Function to monitor GameID and timescale
 monitor_gameid() {
-    while [ ! -f GameID.txt ]; do sleep 1; done
-    printf '\033[1;33m[GameID] %s\033[0m\n' "$(cat GameID.txt)"
+    # Wait for both GameID and timescale initialization
+    while true; do
+        if [ -f GameID.txt ] && grep -q "timescale = 0" CoreKeeperServerLog.txt 2>/dev/null; then
+            printf '\033[1;33m[GameID] %s\033[0m\n' "$(cat GameID.txt)"
+            break
+        fi
+        sleep 1
+    done
 }
 
 # Start GameID monitoring in background
 monitor_gameid &
 
 # Wait for log file and tail it
-while [ ! -f server-log.txt ]; do sleep 1; done
-exec tail -f server-log.txt
+while [ ! -f CoreKeeperServerLog.txt ]; do sleep 1; done
+exec tail -f CoreKeeperServerLog.txt
