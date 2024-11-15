@@ -15,6 +15,7 @@ services:
       - WORLD_MODE=0
       - MAX_PLAYERS=10
       - DATA_PATH=/home/steam/core-keeper-data
+      - GAME_ID=${GAME_ID}
     volumes:
       - ./server-data:/home/steam/core-keeper-data:rw
     restart: unless-stopped
