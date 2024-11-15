@@ -15,38 +15,24 @@ ENV DEBIAN_FRONTEND=noninteractive \
     SCRIPTSDIR="/home/steam/scripts" \
     MODSDIR="/home/steam/core-keeper-data/StreamingAssets/Mods" \
     # Box86/64 settings
-    BOX64_DYNAREC_STRONGMEM=2 \ 
-    BOX64_DYNAREC_SAFEFLAGS=1 \ 
-    BOX64_DYNAREC_BIGBLOCK=1 \ 
+    BOX64_DYNAREC_STRONGMEM=3 \ 
+    BOX64_DYNAREC_SAFEFLAGS=2 \ 
+    BOX64_DYNAREC_BIGBLOCK=0 \ 
     BOX64_DYNAREC_FASTROUND=1 \ 
     BOX64_MALLOC_HACK=1 \ 
     BOX64_DYNAREC_X87DOUBLE=1 \ 
     BOX64_DYNAREC_FASTNAN=0 \
     BOX64_DYNAREC_BLEEDING_EDGE=0 \
     # Box86 settings
-    BOX86_DYNAREC_STRONGMEM=2 \
-    BOX86_DYNAREC_SAFEFLAGS=1 \
-    BOX86_DYNAREC_BIGBLOCK=1 \
+    BOX86_DYNAREC_STRONGMEM=3 \
+    BOX86_DYNAREC_SAFEFLAGS=2 \
+    BOX86_DYNAREC_BIGBLOCK=0 \
     BOX86_DYNAREC_FASTROUND=1 \
     BOX86_MALLOC_HACK=1 \
     BOX86_DYNAREC_X87DOUBLE=1 \
     BOX86_DYNAREC_FASTNAN=0 \
     BOX86_DYNAREC_BLEEDING_EDGE=0
 
-# Safe mode
-#ENV DEBIAN_FRONTEND=noninteractive \
-#    # User config
-#    PUID=1000 \
-#    PGID=1000 \
-#    USER=steam \
-#    HOMEDIR=/home/steam \
-#    # Steam config
-#    STEAMAPPID=1007 \
-#    STEAMAPPID_TOOL=1963720 \
-#    STEAMAPPDIR="/home/steam/core-keeper-dedicated" \
-#    STEAMAPPDATADIR="/home/steam/core-keeper-data" \
-#    SCRIPTSDIR="/home/steam/scripts" \
-#    MODSDIR="/home/steam/core-keeper-data/StreamingAssets/Mods" \
 #    # Box86/64 settings (conservative)
 #    BOX64_DYNAREC_BIGBLOCK=0 \
 #    BOX64_DYNAREC_SAFEFLAGS=2 \
