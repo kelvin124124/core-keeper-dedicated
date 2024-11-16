@@ -13,21 +13,25 @@ for dir in "${STEAMAPPDIR}" "${STEAMAPPDATADIR}"; do
     fi
 done
 
-# Download server files
-log "Downloading Core Keeper Dedicated Server files..."
-/opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate
+# Download server files if needed
+log "Checking Core Keeper Dedicated Server files..."
+if [ ! -f "${STEAMAPPDIR}/CoreKeeperServer" ] || /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate -verify-only 2>&1 | grep -q "Update required"; then
+    log "Downloading Core Keeper Dedicated Server files..."
+    /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate
+fi
 
-log "Downloading Core Keeper Dedicated Server tool files..."
-/opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate
+log "Checking Core Keeper Dedicated Server tool files..."
+if /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate -verify-only 2>&1 | grep -q "Update required"; then
+    log "Downloading Core Keeper Dedicated Server tool files..."
+    /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate
+fi
 
 if [ ! -f "${STEAMAPPDIR}/CoreKeeperServer" ]; then
     log "CoreKeeperServer not found. Download may have failed."
     while true; do sleep 3600; done
 fi
 
-# Ensure all scripts are executable
-chmod +x "${STEAMAPPDIR}"/*.sh
-chmod +x "${STEAMAPPDIR}"/CoreKeeperServer
+chmod +x "${STEAMAPPDIR}"/*.sh "${STEAMAPPDIR}"/CoreKeeperServer
 
 mkdir -p ~/.steam/sdk32/ ~/.steam/sdk64/
 ln -sf "${STEAMAPPDIR}/linux32/steamclient.so" ~/.steam/sdk32/steamclient.so

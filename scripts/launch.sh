@@ -9,9 +9,7 @@ xvfb_pid=$!
 export DISPLAY=:99
 
 # Setup params
-logfile="CoreKeeperServerLog.txt"
-
-params="-batchmode -extralog -logfile $logfile"
+params="-batchmode -extralog -logfile CoreKeeperServerLog.txt"
 [ -n "$WORLD_INDEX" ] && params+=" -world $WORLD_INDEX"
 [ -n "$WORLD_NAME" ] && params+=" -worldname $WORLD_NAME"
 [ -n "$WORLD_SEED" ] && params+=" -worldseed $WORLD_SEED"
@@ -23,7 +21,6 @@ params="-batchmode -extralog -logfile $logfile"
 [ -n "$SERVER_IP" ] && params+=" -ip $SERVER_IP"
 [ -n "$SERVER_PORT" ] && params+=" -port $SERVER_PORT"
 
-chmod +x ./CoreKeeperServer
 box64 ./CoreKeeperServer $params &
 ck_pid=$!
 
@@ -32,9 +29,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Wait for log file to be created
-while [ ! -f CoreKeeperServerLog.txt ]; do
-    sleep 1
-done
+# Function to monitor GameID and timescale
+monitor_gameid() {
+    # Wait for both GameID and timescale initialization
+    while true; do
+        if [ -f GameID.txt ] && grep -q "timescale = 0" CoreKeeperServerLog.txt 2>/dev/null; then
+            printf '\033[1;33m[GameID] %s\033[0m\n' "$(cat GameID.txt)"
+            break
+        fi
+        sleep 1
+    done
+}
 
+# Start GameID monitoring in background
+monitor_gameid &
+
+# Wait for log file and tail it
+while [ ! -f CoreKeeperServerLog.txt ]; do sleep 1; done
 exec tail -f CoreKeeperServerLog.txt

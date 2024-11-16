@@ -1,29 +1,21 @@
 services:
-  core-keeper:
-    container_name: core-keeper
+  ck:
+    container_name: ck
     build:
       context: .
       platforms:
         - linux/arm64
     platform: linux/arm64
-
-    ports:
-      - "27015:27015/udp"
-
     environment:
-      - BOX86_LD_LIBRARY_PATH=/lib/i386-linux-gnu:/usr/lib/i386-linux-gnu:/usr/lib/mono/x86_64-linux-gnu
-      - BOX64_LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/mono/amd64
-      # User configuration
       - PUID=1000
       - PGID=1000
       # Server configuration
-      - WORLD_NAME=Core Keeper ARM64
+      - WORLD_NAME=Core-Keeper-ARM64
       - WORLD_SEED=0
       - WORLD_MODE=0
       - MAX_PLAYERS=10
       - DATA_PATH=/home/steam/core-keeper-data
-
+      - GAME_ID=${GAME_ID}
     volumes:
       - ./server-data:/home/steam/core-keeper-data:rw
-
     restart: unless-stopped
