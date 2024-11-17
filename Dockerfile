@@ -8,8 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     USER=steam \
     HOMEDIR=/home/steam \
     # Steam config
-    STEAMAPPID=1007 \
-    STEAMAPPID_TOOL=1963720 \
+    STEAMAPPID=1963720 \
+    STEAMAPPID_TOOL=1007 \
     STEAMAPPDIR="/home/steam/core-keeper-dedicated" \
     STEAMAPPDATADIR="/home/steam/core-keeper-data" \
     SCRIPTSDIR="/home/steam/scripts" \
