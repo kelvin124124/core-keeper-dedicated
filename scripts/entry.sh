@@ -17,13 +17,13 @@ done
 log "Checking Core Keeper Dedicated Server files..."
 if [ ! -f "${STEAMAPPDIR}/CoreKeeperServer" ] || /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate -verify-only 2>&1 | grep -q "Update required"; then
     log "Downloading Core Keeper Dedicated Server files..."
-    /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate
+    /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID} -dir "${STEAMAPPDIR}" -validate > /dev/null
 fi
 
 log "Checking Core Keeper Dedicated Server tool files..."
 if /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate -verify-only 2>&1 | grep -q "Update required"; then
     log "Downloading Core Keeper Dedicated Server tool files..."
-    /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate
+    /opt/depotdownloader/DepotDownloader -app ${STEAMAPPID_TOOL} -dir "${STEAMAPPDIR}" -validate > /dev/null
 fi
 
 if [ ! -f "${STEAMAPPDIR}/CoreKeeperServer" ]; then
