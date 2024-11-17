@@ -9,7 +9,7 @@ xvfb_pid=$!
 export DISPLAY=:99
 
 # Setup params
-params="-batchmode -extralog -logfile CoreKeeperServerLog.txt"
+params="-batchmode -logfile CoreKeeperServerLog.txt"
 [ -n "$WORLD_INDEX" ] && params+=" -world $WORLD_INDEX"
 [ -n "$WORLD_NAME" ] && params+=" -worldname $WORLD_NAME"
 [ -n "$WORLD_SEED" ] && params+=" -worldseed $WORLD_SEED"
